@@ -16,17 +16,13 @@ docker run -it --rm -v /your/path/here:/minecraft -p 25565:25565 -p 19132:19132/
 
 ## Why?
 
-I was tired of abandoned projects & things not working the way I wanted. 
+If I'm being honest, I wanted to try and make something of my own.
 
-And if I'm being honest, I wanted to try and make something of my own.
+## What are the features you can expect?
 
-## So, what makes this different?
-
-Well, probably not much... This is my first project I've ever submitted but over the years I've picked up skills here and there.
-
-But here's what you can expect from my project:
 - Plug & Play
-    - It's *not* recommended BUT you can literally just use the quickstart and everything will always be current and updated.
+    - You can literally just use the quickstart and everything will always be current and updated.
+    - Or set to any version you'd like with just a couple keystrokes.
 - Customization
     - This PaperMC server comes packaged with Geyser, Floodgate, and ViaVersion.
     - If you want the most up to date plugin (or paper) with a specific version, you can input it into the Docker Compose file.
@@ -43,6 +39,8 @@ Full compose.yml entry, explanations of each line, and recommended compose.yml e
 ```
   minecraft:
     image: 'octoturnip/papermc-on-bedrock'
+    stdin_open: true
+    tty: true
     volumes:
         - '/your/path/here:/minecraft'
     ports:
@@ -50,14 +48,14 @@ Full compose.yml entry, explanations of each line, and recommended compose.yml e
         - '19132:19132/udp'
         - '19132:19132'
     environment:
-        - namedUser="minecraft"
+        - namedUser=minecraft
         - JavaPort=25565
         - BedrockPort=19132
         - MaxMemory=
-        - PaperVersion="latest"
-        - GeyserVersion="latest"
-        - FloodgateVersion="latest"
-        - ViaVersion="latest"
+        - PaperVersion=latest
+        - GeyserVersion=latest
+        - FloodgateVersion=latest
+        - ViaVersion=latest
         - TZ=America/Los_Angeles
         - BackupCount=10
     container_name: minecraft
@@ -101,6 +99,8 @@ All of the defaults can be changes to meet your needs and the startup script wil
 ```
   minecraft:
     image: 'octoturnip/papermc-on-bedrock'
+    stdin_open: true
+    tty: true
     volumes:
         - '/your/path/here:/minecraft'
     ports:
@@ -108,25 +108,33 @@ All of the defaults can be changes to meet your needs and the startup script wil
         - '19132:19132/udp'
         - '19132:19132'
     environment:
-        - PaperVersion="1.21.4"
-        - GeyserVersion="2.6.1"
-        - FloodgateVersion="2.2.4"
+        - PaperVersion=1.21.4
+        - GeyserVersion=2.6.1
+        - FloodgateVersion=2.2.4
     container_name: minecraft
 ```
 
 ## Quick Notes
 
 - I did not add `restart: unless-stopped` to my "compose.yml" but you can add it if you'd like.
-- Remember: it is **NOT RECOMMENDED** to have the (Paper/Geyser/Floodgate)Version set to "latest". It is just there if you really don't care and want to get stright into playing with friends/family out of the box. Since the Docker image keeps everything updated, plugins or settings may not work anymore unless you're paying attention. 
+- Remember: it is **NOT RECOMMENDED** to have the (Paper/Geyser/Floodgate)Version set to "latest". It is just there if you really don't care and want to get straight into playing with friends/family out of the box. Since the Docker image keeps everything updated, plugins or settings may not work anymore unless you're paying attention. 
 - In the "Recommended setup" section, you can technically just have the "PaperVersion" set and nothing else. As of right now, all Geyser/Floodgate plugins work with every Minecraft version since 1.8.
 - If you need to do something else in the terminal but don't want to shut the server down, simply use `control+P` followed by `control+Q`
     - To reattach the container, type the following command: `docker attach minecraft`
 
-# Change History
+# History of Changes and Updates
 
-Updates to the repository are as follows:
+Changelog and Updates to the repository are as follows:
+
+## March 3rd, 2025
+
+- Polished up the 'README.md'
+- Included "stdin_open: true" & "tty: true" in the compose.yml examples because I forgot to include them originally...
+- Fixed typos in 
+    - the compose.yml that would not make it run as intended
+    - the Dockerfile
+    - tartServer.sh
 
 ## February 23nd, 2025
 
 *Initial release*
-
