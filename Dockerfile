@@ -6,7 +6,7 @@
 # Ubuntu rolling version
 FROM --platform=linux/amd64 ubuntu:rolling
 
-# Fetch dependancies
+# Fetch dependencies
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     wget \
     jq \
@@ -31,11 +31,11 @@ RUN rm -rf /var/cache/apt/*
 # Use other username besides 'minecraft'
 ENV namedUser="minecraft"
 
-# Set port veriables
+# Set port variables
 ENV JavaPort=25565
 ENV BedrockPort=19132
 
-# Set a maximum memory ammount
+# Set a maximum memory amount
 ENV MaxMemory=
 
 # Set Paper version
@@ -50,7 +50,7 @@ ENV ViaVersion="latest"
 # Set timezone - OPTIONAL
 ENV TZ="America/Los_Angeles"
 
-# Rolling backup ammount
+# Rolling backup amount
 ENV BackupCount=10
 
 # Expose ports
