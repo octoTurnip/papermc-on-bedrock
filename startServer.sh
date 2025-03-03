@@ -9,7 +9,7 @@ if [ ! -d '/minecraft' ]; then
     mkdir /minecraft
 fi
 
-# Make Minecraft user or User inputed
+# Make Minecraft user or User inputted
 if [ "$(id -u)" = '0' ]; then
     if [ $namedUser = 'minecraft' ]; then
         useradd -r -s /bin/bash minecraft
@@ -93,7 +93,7 @@ echo "      Timezone: $TZ"
 echo "**************************************************"
 echo " "
 
-### Update PaperMC, Geyser, and Floodgate if newer one is avaiable OR was changed
+### Update PaperMC, Geyser, and Floodgate if newer one is available OR was changed
 # PaperMC
 Current_PaperVersion=$(ls server-*)
 if [[ "$PaperVersion" == latest ]]; then
@@ -101,7 +101,7 @@ if [[ "$PaperVersion" == latest ]]; then
 fi
 LATEST_BUILD=$(curl -s --no-progress-meter https://api.papermc.io/v2/projects/paper/versions/${PaperVersion}/builds | jq -r '.builds | map(select(.channel == "default") | .build) | .[-1]')
 if [[ "server-${PaperVersion}-${LATEST_BUILD}.jar" > "$Current_PaperVersion" ]]; then
-    echo "Updateing PaperMC version..."
+    echo "Updating PaperMC version..."
     JAR_NAME=paper-${PaperVersion}-${LATEST_BUILD}.jar
     PAPERMC_URL="https://api.papermc.io/v2/projects/paper/versions/${PaperVersion}/builds/${LATEST_BUILD}/downloads/${JAR_NAME}"
     rm server-*.jar
@@ -115,7 +115,7 @@ if [[ "$GeyserVersion" == latest ]]; then
 fi
 GEYSER_BUILD=$(curl -L --no-progress-meter https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest | jq -r '.build')
 if [[ "plugins/Geyser-Spigot-${GeyserVersion}-${GEYSER_BUILD}.jar" > "$Current_GeyserVersion" ]]; then
-    echo "Updateing Geyser..."
+    echo "Updating Geyser..."
     GEYSER_URL="https://download.geysermc.org/v2/projects/geyser/versions/${GeyserVersion}/builds/$GEYSER_BUILD/downloads/spigot"
     rm plugins/Geyser-Spigot-*.jar
     curl -o plugins/Geyser-Spigot-${GeyserVersion}-${GEYSER_BUILD}.jar $GEYSER_URL
@@ -128,7 +128,7 @@ if [[ "$FloodgateVersion" == latest ]]; then
 fi
 FLOODGATE_BUILD=$(curl -L --no-progress-meter https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest | jq -r '.build')
 if [[ "plugins/Floodgate-Spigot-${FloodgateVersion}-${FLOODGATE_BUILD}.jar" > "$Current_FloodgateVersion" ]]; then
-    echo "Updateing Floodgate..."
+    echo "Updating Floodgate..."
     FLOODGATE_URL="https://download.geysermc.org/v2/projects/floodgate/versions/${FloodgateVersion}/builds/$FLOODGATE_BUILD/downloads/spigot"
     rm plugins/Floodgate-Spigot-*.jar
     curl -o plugins/Floodgate-Spigot-${FloodgateVersion}-${FLOODGATE_BUILD}.jar $FLOODGATE_URL
@@ -141,7 +141,7 @@ if [[ "$ViaVersion" == latest ]]; then
 fi
 VIAVERSION_BUILD=$(curl -L --no-progress-meter https://hangar.papermc.io/api/v1/projects/ViaVersion/versions | jq -r '.result.[].name' | sort -un | tail -1)
 if [[ "plugins/ViaVersion-${VIAVERSION_BUILD}.jar" > "$Current_ViaVersionVersion" ]]; then
-    echo "Updateing ViaVersion..."
+    echo "Updating ViaVersion..."
     VIAVERSION_URL="https://hangar.papermc.io/api/v1/projects/ViaVersion/versions/${ViaVersion}/PAPER/download"
     rm plugins/ViaVersion-*.jar
     wget -nv -O plugins/ViaVersion-${VIAVERSION_BUILD}.jar $VIAVERSION_URL
