@@ -1,4 +1,5 @@
-# Create a Minecraft server running PaperMC + Geyser + Floodgate + ViaVersion in a Docker container.
+# Create a Minecraft server running PaperMC in a Docker container.
+Also pre-packed with Geyser + Floodgate + ViaVersion.
 
 GitHib: https://github.com/octoturnip/
 
@@ -14,9 +15,10 @@ Inspiration from:
 docker run -it --rm -v /your/path/here:/minecraft -p 25565:25565 -p 19132:19132/udp -p 19132:19132 octoturnip/papermc-on-bedrock
 ```
 
-## Why?
+## Why make another?
 
-If I'm being honest, I wanted to try and make something of my own.
+Originally I just wanted to try and make something of my own with features I liked.
+But I like what I have made for myself and feel like sharing with the rest of you!
 
 ## What are the features you can expect?
 
@@ -26,17 +28,21 @@ If I'm being honest, I wanted to try and make something of my own.
 - Customization
     - This PaperMC server comes packaged with Geyser, Floodgate, and ViaVersion.
     - If you want the most up to date plugin (or paper) with a specific version, you can input it into the Docker Compose file.
+    - **(NEW)** Add your own script file that will be launched along with the startup script!
 - Backups
     - Every time you start the server it creates a backup.
     - It also rolls over the last one, meaning if you go over the default amount of 10, the 1st one will be deleted to make room for the new one.
+- **(NEW)** Automatic plugin updater/fetcher
+    - Edit the `plugins.yaml` file in the extras folder to keep your plugins up to date.
+    - Supports plugins from: Hanger.io and Modrinth. *(more sites planned later)*
 
 # SETUP
 
 Full compose.yml entry, explanations of each line, and recommended compose.yml entry.
 
-## Full Compose entry
+## Full Compose entry (with all the defaults)
 
-```
+```yaml
   minecraft:
     image: 'octoturnip/papermc-on-bedrock'
     stdin_open: true
@@ -51,13 +57,14 @@ Full compose.yml entry, explanations of each line, and recommended compose.yml e
         - namedUser=minecraft
         - JavaPort=25565
         - BedrockPort=19132
-        - MaxMemory=
+        - MaxMemory=4096M
         - PaperVersion=latest
         - GeyserVersion=latest
         - FloodgateVersion=latest
         - ViaVersion=latest
         - TZ=America/Los_Angeles
         - BackupCount=10
+        - autoUpdate=off
     container_name: minecraft
 ```
 
@@ -93,10 +100,11 @@ All of the defaults can be changes to meet your needs and the startup script wil
 | `ViaVersion` | `latest` | Always downloads and updates to the latest version of ViaVersion. |
 | `TZ` | `America/Los_Angeles` | Use [this link](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) to find a time zone that is right for you. |
 | `BackupCount` | `10` | Ammount of backup files you want to keep. Created at every startup! |
+| `autoUpdate` | `off` | Controlls weather or not you would like to keep your plugins automatically up to date. |
 
-# Recommended setup for Minecraft version 1.21.4
+# Recommended setup for Minecraft version 1.21.7
 
-```
+```yaml
   minecraft:
     image: 'octoturnip/papermc-on-bedrock'
     stdin_open: true
@@ -108,11 +116,67 @@ All of the defaults can be changes to meet your needs and the startup script wil
         - '19132:19132/udp'
         - '19132:19132'
     environment:
-        - PaperVersion=1.21.4
-        - GeyserVersion=2.6.1
-        - FloodgateVersion=2.2.4
+        - PaperVersion=1.21.7
+        - autoUpdate=on
     container_name: minecraft
 ```
+
+# Plugin Auto Updater
+I'm happy to bring you with an exciting new feature here! in the docker variables, make sure to set: `autoUpdate=on`.
+In your `/minecraft` folder there will be a new folder called "extras" which will have an example file `plugins.yaml`.
+Here is how it is layed out:
+```yaml
+plugins:
+  essensials: 
+    platform: hanger
+    creator: EssentialsX
+    name: Essentials
+    jar: 
+    version: latest
+  chunky: 
+    platform: hanger
+    creator: pop4959
+    name: Chunky
+    jar: 
+    version: 1.4.40
+  voicechat:
+    platform: modrinth
+    creator: 
+    name: simple-voice-chat
+    jar: 
+    version: latest
+```
+
+## Break it down:
+
+`myName:` | A quick reference to what this plugin is called.
+  - example: `essensials` or `chunky`
+
+`platform:` | Where is this plugin is from? 
+
+options: 
+  - `hanger`
+  - `modrinth`
+
+`creator:` | Required for hanger.io plugins
+
+`name:` | The plugins name on the website
+
+`jar:` | This just gets filled in by the script
+
+`version:` | Use `latest` to always keep it up to date, or pick a specific plugin version
+
+
+### How to find the information you need:
+
+- Example Hanger.io URL:
+  - 'https://hangar.papermc.io/pop4959/Chunky'
+  - `creator` = pop4959
+  - `name` = Chunky
+- Example Modrinth URL:
+  - 'https://modrinth.com/plugin/simple-voice-chat'
+  - `name` = simple-voice-chat
+
 
 ## Quick Notes
 
@@ -121,10 +185,22 @@ All of the defaults can be changes to meet your needs and the startup script wil
 - In the "Recommended setup" section, you can technically just have the "PaperVersion" set and nothing else. As of right now, all Geyser/Floodgate plugins work with every Minecraft version since 1.8.
 - If you need to do something else in the terminal but don't want to shut the server down, simply use `control+P` followed by `control+Q`
     - To reattach the container, type the following command: `docker attach minecraft`
+- **For the Auto Plugin Updater, if there is an external link required to download that plugin, it will fail. Only downloads from the sites will work.**
 
 # History of Changes and Updates
 
 Changelog and Updates to the repository are as follows:
+
+## July 18th, 2025
+
+- Yay! 1.21.7 is out. (as of writing this 1.21.8 just released)
+- re-worked the startServer.sh to include
+  - functions
+  - less API calls
+  - cleanup & better error handeling
+- added pluginUpdater.sh
+- added plugins.yaml (as a reference)
+- added yq command to the Dockerfile
 
 ## March 3rd, 2025
 
@@ -133,7 +209,7 @@ Changelog and Updates to the repository are as follows:
 - Fixed typos in 
     - the compose.yml that would not make it run as intended
     - the Dockerfile
-    - tartServer.sh
+    - startServer.sh
 
 ## February 23nd, 2025
 
