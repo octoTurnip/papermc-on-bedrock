@@ -1,0 +1,19 @@
+plugins:
+  essensials: 
+    platform: hanger
+    creator: EssentialsX
+    name: Essentials
+    jar: 
+    version: latest
+  chunky: 
+    platform: hanger
+    creator: pop4959
+    name: Chunky
+    jar: 
+    version: 1.4.40
+  voicechat:
+    platform: modrinth
+    creator: 
+    name: simple-voice-chat
+    jar: 
+    version: latest
