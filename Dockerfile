@@ -41,8 +41,10 @@ ENV BedrockPort=19132
 # Set a maximum memory amount
 ENV MaxMemory="4096M"
 
-# Set Paper version
+# Set Paper Version
 ENV PaperVersion="latest"
+# Set Paper Experimental Builds finder
+ENV experimentalBuilds="off"
 # Set Geyser Version
 ENV GeyserVersion="latest"
 # Set Floodgate Version

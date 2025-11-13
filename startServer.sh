@@ -81,7 +81,7 @@ check-dir "logs"
 
 # Create backups then rotate them
 if [ "$FirstRun" = "NO" ]; then
-        if [ "$BackupCount" = "0" ]; then
+    if [ "$BackupCount" = "0" ]; then
         echo "Skipping backup of the server, due to your wishes..."
     else
         echo "Backing up server..."
@@ -105,6 +105,7 @@ echo "**************************************************"
 echo "      User profile of: $(whoami)"
 echo "      Starting in directory path: $(pwd)"
 echo "      PaperMC version: $PaperVersion"
+echo "      Experimental PaperMC: $experimentalBuilds"
 echo "      Geyser version: $GeyserVersion"
 echo "      Floodgate version: $FloodgateVersion"
 echo "      ViaVersion version: $ViaVersion"
@@ -132,6 +133,10 @@ fi
 
 latestPaperBuild=$(curl -s --no-progress-meter "https://api.papermc.io/v2/projects/paper/versions/${PaperVersion}/builds" | jq -r '.builds | map(select(.channel == "default") | .build) | .[-1]')
 latestPaperBuild="$latestPaperBuild" yq -i '.paperUpdate.latestPaperBuild = env(latestPaperBuild)' logs/startupVars.yaml
+if [[ "$experimentalBuilds" == "on" ]]; then
+    latestPaperBuild=$(curl -s --no-progress-meter "https://api.papermc.io/v2/projects/paper/versions/${PaperVersion}/builds" | jq -r '.builds | map(select(.channel == "experimental") | .build) | .[-1]')
+    latestPaperBuild="$latestPaperBuild" yq -i '.paperUpdate.latestPaperBuild = env(latestPaperBuild)' logs/startupVars.yaml
+fi
 if [[ -z "$latestPaperBuild" || "$latestPaperBuild" == "null" ]]; then
     echo "ERROR: There are only experamental PaperMC builds for version $PaperVersion."
     echo "Please use a different version or wait for the next stable release."

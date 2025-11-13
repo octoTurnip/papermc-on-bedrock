@@ -22,17 +22,17 @@ But I like what I have made for myself and feel like sharing with the rest of yo
 
 ## What are the features you can expect?
 
-- Plug & Play
+- **Plug & Play**
     - You can literally just use the quickstart and everything will always be current and updated.
     - Or set to any version you'd like with just a couple keystrokes.
-- Customization
+- **Customization**
     - This PaperMC server comes packaged with Geyser, Floodgate, and ViaVersion.
     - If you want the most up to date plugin (or paper) with a specific version, you can input it into the Docker Compose file.
     - **(NEW)** Add your own script file that will be launched along with the startup script!
-- Backups
+- **Backups**
     - Every time you start the server it creates a backup.
     - It also rolls over the last one, meaning if you go over the default amount of 10, the 1st one will be deleted to make room for the new one.
-- **(NEW)** Automatic plugin updater/fetcher
+- **Automatic plugin updater/fetcher**
     - Edit the `plugins.yaml` file in the extras folder to keep your plugins up to date.
     - Supports plugins from: Hanger.io and Modrinth. *(more sites planned later)*
 
@@ -50,9 +50,9 @@ Full compose.yml entry, explanations of each line, and recommended compose.yml e
     volumes:
         - '/your/path/here:/minecraft'
     ports:
-        - '25565:25565'
-        - '19132:19132/udp'
-        - '19132:19132'
+        - '25565:25565' #Java
+        - '19132:19132/udp' #Geyser/Bedrock UDP
+        - '19132:19132' #Geyser/Bedrock TCP
     environment:
         - namedUser=minecraft
         - JavaPort=25565
@@ -65,6 +65,7 @@ Full compose.yml entry, explanations of each line, and recommended compose.yml e
         - TZ=America/Los_Angeles
         - BackupCount=10
         - autoUpdate=off
+        - experimentalBuilds=off
     container_name: minecraft
 ```
 
@@ -84,7 +85,7 @@ You won't need to change these unless you change the ports in the 'environment' 
 
 `19132:19132` 'tcp/udp' The port for Bedrock clients. It is needed to have bot TCP (default) and UDP listed in the port section.
 
-## Variables
+## Environment Variables
 
 All of the defaults can be changes to meet your needs and the startup script will update the downloaded config files: 
 
@@ -101,8 +102,11 @@ All of the defaults can be changes to meet your needs and the startup script wil
 | `TZ` | `America/Los_Angeles` | Use [this link](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) to find a time zone that is right for you. |
 | `BackupCount` | `10` | Ammount of backup files you want to keep. Created at every startup! |
 | `autoUpdate` | `off` | Controlls weather or not you would like to keep your plugins automatically up to date. |
+| `experimentalBuilds` | `off` | Toggle on/off experimental builds of PaperMC to test out new features! [^experimentalBuilds] |
 
-# Recommended setup for Minecraft version 1.21.7
+[^experimentalBuilds]: At the time of writing this, Java Minecraft is at version 1.21.10 BUT PaperMC is on version 1.21.8. In order to play the latest MC version you need to enable this by putting `experimentalBuilds=on` in the environment variables. **WARNING!!** Some, most, if not ALL of your plugins will not be compatable!
+
+# Recommended setup for Minecraft version 1.21.8
 
 ```yaml
   minecraft:
@@ -116,7 +120,7 @@ All of the defaults can be changes to meet your needs and the startup script wil
         - '19132:19132/udp'
         - '19132:19132'
     environment:
-        - PaperVersion=1.21.7
+        - PaperVersion=1.21.8
         - autoUpdate=on
     container_name: minecraft
 ```
@@ -149,22 +153,21 @@ plugins:
 
 ## Break it down:
 
-`myName:` | A quick reference to what this plugin is called.
+`myName:`   A quick reference to what this plugin is called.
   - example: `essensials` or `chunky`
 
-`platform:` | Where is this plugin is from? 
+`platform:` Where is this plugin is from?
+> options: 
+>  - `hanger`
+>  - `modrinth`
 
-options: 
-  - `hanger`
-  - `modrinth`
+`creator:`  Required for hanger.io plugins
 
-`creator:` | Required for hanger.io plugins
+`name:`     The plugins name on the website
 
-`name:` | The plugins name on the website
+`jar:`      This just gets filled in by the script
 
-`jar:` | This just gets filled in by the script
-
-`version:` | Use `latest` to always keep it up to date, or pick a specific plugin version
+`version:`  Use `latest` to always keep it up to date, or pick a specific plugin version
 
 
 ### How to find the information you need:
@@ -190,6 +193,12 @@ options:
 # History of Changes and Updates
 
 Changelog and Updates to the repository are as follows:
+
+## November 13th, 2025
+
+- changed default MC version to 1.21.8
+- added `experimentalBuilds` to the variable list [^experimentalBuilds]
+- fixed some spelling/formatting
 
 ## July 18th, 2025
 
