@@ -126,23 +126,28 @@ else
 fi
 
 Current_PaperVersion="$Current_PaperVersion" yq eval -n '.paperUpdate.Current_PaperVersion = env(Current_PaperVersion)' > logs/startupVars.yaml
+# if PaperVersion == "latest" find the most recent release
 if [[ "$PaperVersion" == "latest" ]]; then
-    PaperVersion=$(curl -s --no-progress-meter https://api.papermc.io/v2/projects/paper | jq -r '.versions[-1]')
+    PaperVersion=$(curl -s --no-progress-meter https://fill.papermc.io/v3/projects/paper | jq -r '.versions | to_entries[0] | .value[0]')
     PaperVersion="$PaperVersion" yq -i '.paperUpdate.PaperVersion = env(PaperVersion)' logs/startupVars.yaml
 fi
 
-latestPaperBuild=$(curl -s --no-progress-meter "https://api.papermc.io/v2/projects/paper/versions/${PaperVersion}/builds" | jq -r '.builds | map(select(.channel == "default") | .build) | .[-1]')
-latestPaperBuild="$latestPaperBuild" yq -i '.paperUpdate.latestPaperBuild = env(latestPaperBuild)' logs/startupVars.yaml
+# find the most recent build for selected PaperVersion
 if [[ "$experimentalBuilds" == "on" ]]; then
-    latestPaperBuild=$(curl -s --no-progress-meter "https://api.papermc.io/v2/projects/paper/versions/${PaperVersion}/builds" | jq -r '.builds | map(select(.channel == "experimental") | .build) | .[-1]')
-    latestPaperBuild="$latestPaperBuild" yq -i '.paperUpdate.latestPaperBuild = env(latestPaperBuild)' logs/startupVars.yaml
+    latestPaperBuild=$(curl -s --no-progress-meter "https://fill.papermc.io/v3/projects/paper/versions/${PaperVersion}/builds" | jq -r  '.[0] | .id')
+else
+    latestPaperBuild=$(curl -s --no-progress-meter "https://fill.papermc.io/v3/projects/paper/versions/${PaperVersion}/builds" | jq -r 'map(select(.channel == "STABLE")) | .[0] | .id')
+    # if latestPaperBuild == "null"
+    if [[ -z "$latestPaperBuild" || "$latestPaperBuild" == "null" ]]; then
+        echo "ERROR: There are only experamental PaperMC builds for version $PaperVersion."
+        echo "Please use a different version or wait for the next stable release."
+        echo "Exiting..."
+        exit 1
+    fi
 fi
-if [[ -z "$latestPaperBuild" || "$latestPaperBuild" == "null" ]]; then
-    echo "ERROR: There are only experamental PaperMC builds for version $PaperVersion."
-    echo "Please use a different version or wait for the next stable release."
-    echo "Exiting..."
-    exit 1
-fi
+latestPaperBuild="$latestPaperBuild" yq -i '.paperUpdate.latestPaperBuild = env(latestPaperBuild)' logs/startupVars.yaml
+
+# Compare your target & current PaperVersion
 Paper_NeedsUpdate="false"
 Target_PaperVersion="${PaperVersion}-${latestPaperBuild}"
 Target_PaperVersion="$Target_PaperVersion" yq -i '.paperUpdate.Target_PaperVersion = env(Target_PaperVersion)' logs/startupVars.yaml
@@ -156,14 +161,19 @@ elif [[ -n "$Current_PaperVersion" && -n "$Target_PaperVersion" ]]; then
     fi
 fi
 Paper_NeedsUpdate="$Paper_NeedsUpdate" yq -i '.paperUpdate.Paper_NeedsUpdate = env(Paper_NeedsUpdate)' logs/startupVars.yaml
+
+# Check if an update is needed or not
 if [[ "$Paper_NeedsUpdate" == "true" ]]; then
-    echo "Updating PaperMC version..."
-    jarName="paper-${PaperVersion}-${latestPaperBuild}.jar"
-    jarName="$jarName" yq -i '.paperUpdate.jarName = env(jarName)' logs/startupVars.yaml
-    PaperURL="https://api.papermc.io/v2/projects/paper/versions/${PaperVersion}/builds/${latestPaperBuild}/downloads/${jarName}"
+    # Set the download URL
+    PaperURL=$(curl -s --no-progress-meter "https://fill.papermc.io/v3/projects/paper/versions/${PaperVersion}/builds/${latestPaperBuild}" | jq -r '.downloads."server:default".url // "null"')
     PaperURL="$PaperURL" yq -i '.paperUpdate.PaperURL = env(PaperURL)' logs/startupVars.yaml
+    # Remove old .jar file
     rm -f server-*.jar
+    # UPDATE!!!
+    echo "Updating PaperMC version..."
     curl -o "server-${PaperVersion}-${latestPaperBuild}.jar" "$PaperURL"
+else
+    echo "No update needed for PaperMC!"
 fi
 
 
@@ -340,5 +350,5 @@ fi
 echo "Starting Java server with -Xms${JAVA_MIN_MEM} -Xmx${JAVA_MAX_MEM}"
 exec java -Xms"${JAVA_MIN_MEM}" -Xmx"${JAVA_MAX_MEM}" -jar "$SERVER_JAR_PATH" nogui
 
-# Exit container (this will only be used if the 'exec' fails
+# Exit container will only be used if the 'exec' command fails
 exit 0

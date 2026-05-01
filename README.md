@@ -15,10 +15,10 @@ Inspiration from:
 docker run -it --rm -v /your/path/here:/minecraft -p 25565:25565 -p 19132:19132/udp -p 19132:19132 octoturnip/papermc-on-bedrock
 ```
 
-## Why make another?
+## Why make this?
 
 Originally I just wanted to try and make something of my own with features I liked.
-But I like what I have made for myself and feel like sharing with the rest of you!
+But I like what I have made for myself and felt like sharing with the rest of you!
 
 ## What are the features you can expect?
 
@@ -28,7 +28,7 @@ But I like what I have made for myself and feel like sharing with the rest of yo
 - **Customization**
     - This PaperMC server comes packaged with Geyser, Floodgate, and ViaVersion.
     - If you want the most up to date plugin (or paper) with a specific version, you can input it into the Docker Compose file.
-    - **(NEW)** Add your own script file that will be launched along with the startup script!
+    - Add your own script file that will be launched along with the startup script!
 - **Backups**
     - Every time you start the server it creates a backup.
     - It also rolls over the last one, meaning if you go over the default amount of 10, the 1st one will be deleted to make room for the new one.
@@ -104,9 +104,9 @@ All of the defaults can be changes to meet your needs and the startup script wil
 | `autoUpdate` | `off` | Controlls weather or not you would like to keep your plugins automatically up to date. |
 | `experimentalBuilds` | `off` | Toggle on/off experimental builds of PaperMC to test out new features! [^experimentalBuilds] |
 
-[^experimentalBuilds]: At the time of writing this, Java Minecraft is at version 1.21.10 BUT PaperMC is on version 1.21.8. In order to play the latest MC version you need to enable this by putting `experimentalBuilds=on` in the environment variables. **WARNING!!** Some, most, if not ALL of your plugins will not be compatable!
+[^experimentalBuilds]: At the time of writing this, Java Minecraft is at version 26.1.2 but STABLE PaperMC is on version 1.21.11. In order to play the latest MC version you need to enable this by putting `experimentalBuilds=on` in the environment variables. **WARNING!!** You need to make sure that your plugins are compatable!
 
-# Recommended setup for Minecraft version 1.21.8
+# Recommended setup for Minecraft version 1.21.11
 
 ```yaml
   minecraft:
@@ -120,7 +120,7 @@ All of the defaults can be changes to meet your needs and the startup script wil
         - '19132:19132/udp'
         - '19132:19132'
     environment:
-        - PaperVersion=1.21.8
+        - PaperVersion=1.21.11
         - autoUpdate=on
     container_name: minecraft
 ```
@@ -151,7 +151,7 @@ plugins:
     version: latest
 ```
 
-## Break it down:
+## Breaking it down:
 
 `myName:`   A quick reference to what this plugin is called.
   - example: `essensials` or `chunky`
@@ -193,6 +193,13 @@ plugins:
 # History of Changes and Updates
 
 Changelog and Updates to the repository are as follows:
+
+## May 1st, 2026
+
+- [updated JDK from version 21 to 25](https://docs.papermc.io/paper/getting-started/)
+- changed default MC version to 1.21.11
+- updated PaperMC API from V2 -> V3 *(thank you to [oriold](https://github.com/oriold) for pointing this out!)*
+- cleaned up the README.md
 
 ## November 13th, 2025
 

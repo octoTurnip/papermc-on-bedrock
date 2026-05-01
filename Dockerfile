@@ -25,7 +25,7 @@ RUN wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
 RUN wget -O - https://apt.corretto.aws/corretto.key | sudo gpg --dearmor -o /usr/share/keyrings/corretto-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/corretto-keyring.gpg] https://apt.corretto.aws stable main" | sudo tee /etc/apt/sources.list.d/corretto.list
 RUN apt-get update && apt-get install -y \
-    java-21-amazon-corretto-jdk \
+    java-25-amazon-corretto-jdk \
     libxi6 \
     libxtst6 \
     libxrender1 \
